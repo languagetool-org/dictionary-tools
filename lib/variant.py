@@ -22,7 +22,7 @@ class Variant:
     def __init__(self, locale_code: str):
         parsed = locale_code.split('-')
         self.lang = parsed[0]
-        self.country = parsed[1]
+        self.country = parsed[1] if len(parsed) > 1 else None
         self.agreement = parsed[2] if len(parsed) > 2 else None
         self.pretty = self.LANG_CODES.get(self.lang)
         self.hyphenated = locale_code

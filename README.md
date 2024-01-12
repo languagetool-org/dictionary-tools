@@ -16,3 +16,7 @@ Under construction!
 ## Usage
 
 This repository should be a submodule of language-specific repositories. For example, the [Portuguese repository](https://github.com/languagetool-org/portuguese-pos-dict).
+
+⚠️ Note that the name of this repository is in **kebab-case**, but Python modules should be imported in **snake_case**.
+Therefore, when importing this as a submodule, make sure to set the path to `dict_tools`, which uses the underscore.
+If you don't do this, you may fail to import it as a module.

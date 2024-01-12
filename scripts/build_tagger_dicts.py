@@ -38,7 +38,7 @@ class CLI:
         self.args = self.parser.parse_args()
 
 
-def set_shell_env() -> dict[str, str]:
+def set_shell_env():
     custom_env = {
         'REPO_DIR': REPO_DIR,
         'DATA_SRC_DIR': TAGGER_DICT_DIR,
@@ -52,54 +52,52 @@ def set_shell_env() -> dict[str, str]:
     return {**os.environ, **custom_env}
 
 
-def run_shell_script(env: dict) -> None:
+def run_shell_script() -> None:
     """Calls the shell script that gathers the tagger dict source files into a single TXT."""
-    ShellCommand(f"bash {TAGGER_BUILD_SCRIPT_PATH}", env=env).run_with_output()
+    ShellCommand(f"bash {TAGGER_BUILD_SCRIPT_PATH}", env=SHELL_ENV).run_with_output()
 
 
-def build_pos_binary(variant: Variant) -> None:
+def build_pos_binary() -> None:
     cmd_build = (
         f"java -cp {LT_JAR_PATH} "
         f"org.languagetool.tools.POSDictionaryBuilder "
         f"-i {RESULT_POS_DICT_FILEPATH} "
-        f"-info {variant.pos_info_java_input_path()} "
-        f"-o {variant.pos_dict_java_output_path()}"
+        f"-info {LANGUAGE.pos_info_java_input_path()} "
+        f"-o {LANGUAGE.pos_dict_java_output_path()}"
     )
     ShellCommand(cmd_build).run()
-    variant.copy_pos_info()
+    LANGUAGE.copy_pos_info()
 
 
-def build_synth_binary(variant: Variant) -> None:
+def build_synth_binary() -> None:
     cmd_build = (
         f"java -cp {LT_JAR_PATH} "
         f"org.languagetool.tools.SynthDictionaryBuilder "
         f"-i {RESULT_POS_DICT_FILEPATH} "
-        f"-info {variant.synth_info_java_input_path()} "
-        f"-o {variant.synth_dict_java_output_path()}"
+        f"-info {LANGUAGE.synth_info_java_input_path()} "
+        f"-o {LANGUAGE.synth_dict_java_output_path()}"
     )
     ShellCommand(cmd_build).run()
-    variant.copy_synth_info()
-    variant.rename_synth_tag_files()
+    LANGUAGE.copy_synth_info()
+    LANGUAGE.rename_synth_tag_files()
 
 
 def main():
-    cli = CLI()
-    LOGGER.setLevel(cli.args.verbosity.upper())
-    FORCE_INSTALL = cli.args.force_install
-    FORCE_COMPILE = cli.args.no_force_compile
-    CUSTOM_INSTALL_VERSION = cli.args.install_version
-    # TODO: understand how to select dict variants for tagger dict compilation (usually a single one?)
-    DIC_VARIANTS = VARIANT_MAPPING[cli.args.language]
-    SHELL_ENV = set_shell_env()
     if FORCE_COMPILE:
         compile_lt_dev()
-    for variant in DIC_VARIANTS:
-        run_shell_script(SHELL_ENV)
-        build_pos_binary(variant)
-        build_synth_binary(variant)
+    run_shell_script()
+    build_pos_binary()
+    build_synth_binary()
     if FORCE_INSTALL:
         install_dictionaries(custom_version=CUSTOM_INSTALL_VERSION)
 
 
 if __name__ == "__main__":
+    cli = CLI()
+    LOGGER.setLevel(cli.args.verbosity.upper())
+    FORCE_INSTALL = cli.args.force_install
+    FORCE_COMPILE = cli.args.no_force_compile
+    CUSTOM_INSTALL_VERSION = cli.args.install_version
+    LANGUAGE = Variant(cli.args.language)
+    SHELL_ENV = set_shell_env()
     main()
