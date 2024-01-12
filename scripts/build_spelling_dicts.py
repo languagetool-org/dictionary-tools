@@ -8,11 +8,11 @@ import concurrent.futures
 from tempfile import NamedTemporaryFile
 from os import path
 
-from dict_tools.logger import LOGGER
-from dict_tools.constants import SPELLING_DICT_DIR, LT_JAR_PATH, LT_DIR, LT_VER, LATIN_1_ENCODING
-from dict_tools.shell_command import ShellCommand
-from dict_tools.utils import compile_lt_dev, install_dictionaries
-from dict_tools.variant import Variant, VARIANT_MAPPING
+from lib.logger import LOGGER
+from lib.constants import SPELLING_DICT_DIR, LT_JAR_PATH, LT_DIR, LT_VER, LATIN_1_ENCODING
+from lib.shell_command import ShellCommand
+from lib.utils import compile_lt_dev, install_dictionaries
+from lib.variant import Variant, VARIANT_MAPPING
 
 
 class CLI:

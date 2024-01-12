@@ -2,7 +2,7 @@ import shutil
 from os import path
 from typing import Literal
 
-from dict_tools.constants import HUNSPELL_DIR, SPELLING_DICT_DIR, COMPOUNDS_DIR, JAVA_RESULTS_DIR, TAGGER_DICT_DIR
+from lib.constants import HUNSPELL_DIR, SPELLING_DICT_DIR, COMPOUNDS_DIR, JAVA_RESULTS_DIR, TAGGER_DICT_DIR
 
 
 class Variant:

@@ -1,9 +1,9 @@
 from os import chdir, path
 from typing import Optional
 
-from dict_tools.constants import REPO_DIR, LT_DIR, JAVA_RESULTS_DIR
-from dict_tools.shell_command import ShellCommand
-from dict_tools.logger import LOGGER
+from lib.constants import REPO_DIR, LT_DIR, JAVA_RESULTS_DIR
+from lib.shell_command import ShellCommand
+from lib.logger import LOGGER
 
 
 def compile_lt_dev():

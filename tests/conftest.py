@@ -1,3 +1,3 @@
-from dict_tools.logger import LOGGER
+from lib.logger import LOGGER
 
 LOGGER.setLevel("FATAL")

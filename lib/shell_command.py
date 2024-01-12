@@ -3,7 +3,7 @@ import shlex
 import subprocess
 from typing import AnyStr
 
-from dict_tools.logger import LOGGER
+from lib.logger import LOGGER
 
 
 class ShellCommandException(Exception):

@@ -1,6 +1,6 @@
 import pytest
 
-from dict_tools.shell_command import ShellCommand, ShellCommandException
+from lib.shell_command import ShellCommand, ShellCommandException
 
 
 class TestShellCommand:

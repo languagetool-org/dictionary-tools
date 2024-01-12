@@ -4,13 +4,13 @@ logic, since most of it remains written in Perl.
 import argparse
 import os
 
-from dict_tools.logger import LOGGER
-from dict_tools.constants import (TAGGER_BUILD_SCRIPT_PATH, FDIC_DIR, RESULT_POS_DICT_FILEPATH,
-                                  SORTED_POS_DICT_FILEPATH, POS_DICT_DIFF_FILEPATH, OLD_POS_DICT_FILEPATH, REPO_DIR,
-                                  TAGGER_DICT_DIR, LT_RESULTS_DIR, LT_JAR_PATH)
-from dict_tools.shell_command import ShellCommand
-from dict_tools.utils import compile_lt_dev, install_dictionaries
-from dict_tools.variant import Variant, VARIANT_MAPPING
+from lib.logger import LOGGER
+from lib.constants import (TAGGER_BUILD_SCRIPT_PATH, FDIC_DIR, RESULT_POS_DICT_FILEPATH,
+                           SORTED_POS_DICT_FILEPATH, POS_DICT_DIFF_FILEPATH, OLD_POS_DICT_FILEPATH, REPO_DIR,
+                           TAGGER_DICT_DIR, LT_RESULTS_DIR, LT_JAR_PATH)
+from lib.shell_command import ShellCommand
+from lib.utils import compile_lt_dev, install_dictionaries
+from lib.variant import Variant, VARIANT_MAPPING
 
 
 class CLI:

@@ -1,4 +1,4 @@
-from dict_tools.variant import Variant
+from lib.variant import Variant
 
 
 class TestVariant:
