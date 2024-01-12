@@ -10,7 +10,7 @@ from lib.constants import (TAGGER_BUILD_SCRIPT_PATH, FDIC_DIR, RESULT_POS_DICT_F
                            TAGGER_DICT_DIR, LT_RESULTS_DIR, LT_JAR_PATH)
 from lib.shell_command import ShellCommand
 from lib.utils import compile_lt_dev, install_dictionaries
-from lib.variant import Variant, VARIANT_MAPPING
+from lib.variant import Variant
 
 
 class CLI:
