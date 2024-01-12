@@ -1,4 +1,4 @@
-from os import chdir, path, environ
+from os import chdir, path
 from typing import Optional
 
 from dict_tools.constants import REPO_DIR, LT_DIR, JAVA_RESULTS_DIR
