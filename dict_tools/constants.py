@@ -5,7 +5,7 @@ LT_VER = "6.4-SNAPSHOT"
 LATIN_1_ENCODING = 'ISO-8859-1'
 
 # Paths
-REPO_DIR = pathlib.Path(path.dirname(path.abspath(__file__))).parent
+REPO_DIR = pathlib.Path(path.dirname(path.abspath(__file__))).parent.parent
 LT_HOME = environ.get('LT_HOME')
 LT_DIR = path.join(pathlib.Path(REPO_DIR).parent, "languagetool") if LT_HOME is None else LT_HOME
 DATA_DIR = path.join(REPO_DIR, 'data')

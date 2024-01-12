@@ -88,6 +88,7 @@ def main():
     FORCE_INSTALL = cli.args.force_install
     FORCE_COMPILE = cli.args.no_force_compile
     CUSTOM_INSTALL_VERSION = cli.args.install_version
+    # TODO: understand how to select dict variants for tagger dict compilation (usually a single one?)
     DIC_VARIANTS = VARIANT_MAPPING[cli.args.language]
     SHELL_ENV = set_shell_env()
     if FORCE_COMPILE:
