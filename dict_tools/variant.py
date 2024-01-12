@@ -2,8 +2,7 @@ import shutil
 from os import path
 from typing import Literal
 
-from dict_tools.constants import HUNSPELL_DIR, SPELLING_DICT_DIR, SPELLING_OUTPUT_DIR, COMPOUNDS_DIR, JAVA_RESULTS_DIR, \
-    TAGGER_DICT_DIR
+from dict_tools.constants import HUNSPELL_DIR, SPELLING_DICT_DIR, COMPOUNDS_DIR, JAVA_RESULTS_DIR, TAGGER_DICT_DIR
 
 
 class Variant:
@@ -36,19 +35,19 @@ class Variant:
         return path.join(HUNSPELL_DIR, f"{self.underscored}.aff")
 
     def dic(self) -> str:
-        """Path to the plaintext Hunspell file.."""
+        """Path to the plaintext Hunspell file."""
         return path.join(HUNSPELL_DIR, f"{self.underscored}.dic")
 
     def dict(self) -> str:
         """Path to the BINARY."""
-        return path.join(SPELLING_OUTPUT_DIR, f"{self.hyphenated}.dict")
+        return path.join(self.spelling_output_dir(), f"{self.hyphenated}.dict")
 
     def info(self, directory: Literal['source', 'target']) -> str:
         """The path to the info file can be in the source (current repo) or destination (the java src)."""
         if directory == 'source':
             directory = SPELLING_DICT_DIR
         elif directory == 'target':
-            directory = SPELLING_OUTPUT_DIR
+            directory = self.spelling_output_dir()
         return path.join(directory, f"{self.hyphenated}.info")
 
     def compounds(self) -> str:
