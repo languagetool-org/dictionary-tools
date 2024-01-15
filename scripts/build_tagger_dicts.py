@@ -4,6 +4,7 @@ logic, since most of it remains written in Perl.
 import argparse
 import os
 
+from lib.languagetool_utils import LanguageToolUtils
 from lib.logger import LOGGER
 from lib.constants import (TAGGER_BUILD_SCRIPT_PATH, FDIC_DIR, RESULT_POS_DICT_FILEPATH,
                            SORTED_POS_DICT_FILEPATH, POS_DICT_DIFF_FILEPATH, OLD_POS_DICT_FILEPATH, REPO_DIR,
@@ -57,37 +58,13 @@ def run_shell_script() -> None:
     ShellCommand(f"bash {TAGGER_BUILD_SCRIPT_PATH}", env=SHELL_ENV).run_with_output()
 
 
-def build_pos_binary() -> None:
-    cmd_build = (
-        f"java -cp {LT_JAR_PATH} "
-        f"org.languagetool.tools.POSDictionaryBuilder "
-        f"-i {RESULT_POS_DICT_FILEPATH} "
-        f"-info {LANGUAGE.pos_info_java_input_path()} "
-        f"-o {LANGUAGE.pos_dict_java_output_path()}"
-    )
-    ShellCommand(cmd_build).run()
-    LANGUAGE.copy_pos_info()
-
-
-def build_synth_binary() -> None:
-    cmd_build = (
-        f"java -cp {LT_JAR_PATH} "
-        f"org.languagetool.tools.SynthDictionaryBuilder "
-        f"-i {RESULT_POS_DICT_FILEPATH} "
-        f"-info {LANGUAGE.synth_info_java_input_path()} "
-        f"-o {LANGUAGE.synth_dict_java_output_path()}"
-    )
-    ShellCommand(cmd_build).run()
-    LANGUAGE.copy_synth_info()
-    LANGUAGE.rename_synth_tag_files()
-
-
 def main():
     if FORCE_COMPILE:
         compile_lt_dev()
     run_shell_script()
-    build_pos_binary()
-    build_synth_binary()
+    lt = LanguageToolUtils(LANGUAGE)
+    lt.build_pos_binary()
+    lt.build_synth_binary()
     if FORCE_INSTALL:
         install_dictionaries(custom_version=CUSTOM_INSTALL_VERSION)
 
