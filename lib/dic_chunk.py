@@ -44,6 +44,7 @@ class DicChunk:
         Returns:
             A list of DicChunk objects, each representing a chunk of the dictionary file
         """
+        LOGGER.debug(f"Splitting dictionary file \"{dic_path}\" into chunks...")
         compounds = (True if 'compounds' in dic_path else False)
         with open(dic_path, 'r', encoding=LATIN_1_ENCODING) as dic_file:
             lines = dic_file.readlines()[1:]  # Skip the first line
@@ -65,6 +66,7 @@ class DicChunk:
                 chunk_file.write(f"{len(chunk)}\n")
                 chunk_file.writelines(chunk)
             chunks.append(cls(chunk_path, compounds))
+        LOGGER.debug(f"Split into {len(chunks)} chunks.")
         return chunks
 
     def unmunch(self, aff_path: str, delete_tmp: bool = False) -> NamedTemporaryFile:

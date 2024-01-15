@@ -46,6 +46,7 @@ class LanguageToolUtils:
         tokenisation_result = ShellCommand(tokenise_cmd).run_with_input(unmunched_str)
         tokenised_tmp.write(tokenisation_result)
         tokenised_tmp.flush()
+        LOGGER.debug(f"Done tokenising {unmunched_file.name}!")
         return tokenised_tmp
 
     def build_spelling_binary(self, tokenised_temps: List[NamedTemporaryFile]) -> None:
@@ -62,7 +63,7 @@ class LanguageToolUtils:
         Returns:
             None
         """
-        LOGGER.info(f"Building binary for {self.variant}...")
+        LOGGER.info(f"Building spelling binary for {self.variant}...")
         megatemp = NamedTemporaryFile(delete=self.delete_tmp, mode='w',
                                       encoding='utf-8')  # Open the file with UTF-8 encoding
         lines = set()
@@ -80,11 +81,12 @@ class LanguageToolUtils:
             f"-o {self.variant.dict()}"
         )
         ShellCommand(cmd_build).run()
-        LOGGER.info(f"Done compiling {self.variant} dictionary!")
+        LOGGER.info(f"Done compiling {self.variant} spelling dictionary!")
         self.variant.copy_spell_info()
         megatemp.close()
 
     def build_pos_binary(self) -> None:
+        LOGGER.info(f"Building part-of-speech binary for {self.variant}...")
         cmd_build = (
             f"java -cp {LT_JAR_PATH} "
             f"org.languagetool.tools.POSDictionaryBuilder "
@@ -93,9 +95,11 @@ class LanguageToolUtils:
             f"-o {self.variant.pos_dict_java_output_path()}"
         )
         ShellCommand(cmd_build).run()
+        LOGGER.info(f"Done compiling {self.variant} part-of-speech dictionary!")
         self.variant.copy_pos_info()
 
     def build_synth_binary(self) -> None:
+        LOGGER.info(f"Building synthesiser binary for {self.variant}...")
         cmd_build = (
             f"java -cp {LT_JAR_PATH} "
             f"org.languagetool.tools.SynthDictionaryBuilder "
@@ -104,5 +108,6 @@ class LanguageToolUtils:
             f"-o {self.variant.synth_dict_java_output_path()}"
         )
         ShellCommand(cmd_build).run()
+        LOGGER.info(f"Done compiling {self.variant} synthesiser dictionary!")
         self.variant.copy_synth_info()
         self.variant.rename_synth_tag_files()

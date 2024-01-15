@@ -9,7 +9,7 @@ from os import path
 from lib.dic_chunk import DicChunk
 from lib.logger import LOGGER
 from lib.constants import SPELLING_DICT_DIR
-from lib.utils import compile_lt_dev, install_dictionaries, convert_to_utf8
+from lib.utils import compile_lt_dev, install_dictionaries, convert_to_utf8, pretty_time_delta
 from lib.variant import Variant, VARIANT_MAPPING
 from lib.languagetool_utils import LanguageToolUtils as LtUtils
 
@@ -69,7 +69,8 @@ def process_variant(variant: Variant, dic_chunk: DicChunk) -> tuple[Variant, Nam
 
 
 def main():
-    LOGGER.debug(f"started at {datetime.now().strftime('%r')}")
+    start_time = datetime.now()
+    LOGGER.debug(f"Started at {start_time.strftime('%r')}")
     LOGGER.debug(
         f"Options used:\n"
         f"TMP_DIR: {TMP_DIR}\n"
@@ -107,7 +108,9 @@ def main():
             file.close()
     if FORCE_INSTALL:
         install_dictionaries(CUSTOM_INSTALL_VERSION)
-    LOGGER.debug(f"finished at {datetime.now().strftime('%r')}")
+    end_time = datetime.now()
+    LOGGER.debug(f"Finished at {end_time.strftime('%r')}. "
+                 f"Total time elapsed: {pretty_time_delta(end_time - start_time)}.")
 
 
 if __name__ == "__main__":

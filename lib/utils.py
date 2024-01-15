@@ -1,5 +1,6 @@
 import codecs
 import shutil
+from datetime import timedelta
 from os import chdir, path
 from tempfile import NamedTemporaryFile
 from typing import Optional
@@ -39,3 +40,19 @@ def convert_to_utf8(tmp_file: NamedTemporaryFile, delete_tmp: bool = False) -> N
         shutil.copyfileobj(file, utf8_tmp)
     utf8_tmp.seek(0)
     return utf8_tmp
+
+
+def pretty_time_delta(time_delta: timedelta) -> str:
+    """Taken from https://gist.github.com/thatalextaylor/7408395 and tweaked slightly."""
+    seconds = int(time_delta.total_seconds())
+    days, seconds = divmod(seconds, 86400)
+    hours, seconds = divmod(seconds, 3600)
+    minutes, seconds = divmod(seconds, 60)
+    if days > 0:
+        return '%dd%dh%dmin%ds' % (days, hours, minutes, seconds)
+    elif hours > 0:
+        return '%dh%dmin%ds' % (hours, minutes, seconds)
+    elif minutes > 0:
+        return '%dmin%ds' % (minutes, seconds)
+    else:
+        return '%ds' % (seconds,)
