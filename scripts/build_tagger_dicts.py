@@ -3,6 +3,7 @@ logic, since most of it remains written in Perl.
 """
 import argparse
 import os
+from datetime import datetime
 
 from lib.languagetool_utils import LanguageToolUtils
 from lib.logger import LOGGER
@@ -10,7 +11,7 @@ from lib.constants import (TAGGER_BUILD_SCRIPT_PATH, FDIC_DIR, RESULT_POS_DICT_F
                            SORTED_POS_DICT_FILEPATH, POS_DICT_DIFF_FILEPATH, OLD_POS_DICT_FILEPATH, REPO_DIR,
                            TAGGER_DICT_DIR, LT_RESULTS_DIR)
 from lib.shell_command import ShellCommand
-from lib.utils import compile_lt_dev, install_dictionaries
+from lib.utils import compile_lt_dev, install_dictionaries, pretty_time_delta
 from lib.variant import Variant
 
 
@@ -59,6 +60,8 @@ def run_shell_script() -> None:
 
 
 def main():
+    start_time = datetime.now()
+    LOGGER.debug(f"Started at {start_time.strftime('%r')}")
     if FORCE_COMPILE:
         compile_lt_dev()
     run_shell_script()
@@ -67,6 +70,9 @@ def main():
     lt.build_synth_binary()
     if FORCE_INSTALL:
         install_dictionaries(custom_version=CUSTOM_INSTALL_VERSION)
+    end_time = datetime.now()
+    LOGGER.debug(f"Finished at {end_time.strftime('%r')}. "
+                 f"Total time elapsed: {pretty_time_delta(end_time - start_time)}.")
 
 
 if __name__ == "__main__":

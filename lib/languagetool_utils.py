@@ -1,3 +1,4 @@
+import re
 from tempfile import NamedTemporaryFile
 from typing import List
 
@@ -33,7 +34,9 @@ class LanguageToolUtils:
             a NamedTemporaryFile with the result of tokenisation written to it; note this is a UTF-8-encoded file; it is
             not at this stage that we move from latin-1 encoding to UTF-8.
         """
-        tokenised_tmp = NamedTemporaryFile(delete=self.delete_tmp, mode='w')
+        chunk_pattern = re.compile("[a-z]{2}_[A-Z]{2}(?:_[a-zA-Z0-9]+)?_chunk\\d+")
+        prefix = chunk_pattern.findall(unmunched_file.name.split('/')[-1])[0] + "_tokenised_"
+        tokenised_tmp = NamedTemporaryFile(delete=self.delete_tmp, mode='w', prefix=prefix)
         LOGGER.debug(f"Tokenising {unmunched_file.name} into {tokenised_tmp.name} ...")
         tokenise_cmd = (
             f"java -cp {LT_JAR_PATH}:"

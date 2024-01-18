@@ -6,6 +6,7 @@ from typing import List
 from lib.constants import LATIN_1_ENCODING
 from lib.logger import LOGGER
 from lib.shell_command import ShellCommand
+from lib.variant import Variant
 
 
 class DicChunk:
@@ -13,11 +14,13 @@ class DicChunk:
 
     Attributes:
         filepath (str): the path to the chunk
+        name (str): the name of the chunk (e.g. chunk0)
         compounds (bool): whether this is a file containing compounds or not; if True, this chunk will *not* be
                           tokenised;
     """
-    def __init__(self, filepath: str, compounds: bool = False):
+    def __init__(self, filepath: str, name: str, compounds: bool = False):
         self.filepath = filepath
+        self.name = name
         self.compounds = compounds
 
     def __str__(self) -> str:
@@ -32,20 +35,27 @@ class DicChunk:
         shutil.rmtree(self.filepath)
 
     @classmethod
-    def from_hunspell_dic(cls, dic_path: str, chunk_size: int, target_dir: str, sample_size: int) -> List:
+    def from_hunspell_dic(cls, variant: Variant, chunk_size: int, target_dir: str, sample_size: int,
+                          compounds: bool = False) -> List:
         """Splits a dictionary file into smaller files (chunks) of a given number of lines.
 
         Args:
-            dic_path (str): the path to the Hunspell .dic file
+            variant (Variant): the variant for which we want to unmunch the .dic file
             chunk_size (int): the number of lines per chunk
             target_dir (str): the directory where the chunks will be saved
             sample_size (int): the number of lines to read from the dictionary file; if 0 or negative, read all lines
+            compounds (bool): whether this is a file containing compounds or not
 
         Returns:
             A list of DicChunk objects, each representing a chunk of the dictionary file
         """
+        if compounds:
+            tmp_dir = path.join(target_dir, 'compounds')
+            dic_path = variant.compounds()
+        else:
+            tmp_dir = target_dir
+            dic_path = variant.dic()
         LOGGER.debug(f"Splitting dictionary file \"{dic_path}\" into chunks...")
-        compounds = (True if 'compounds' in dic_path else False)
         with open(dic_path, 'r', encoding=LATIN_1_ENCODING) as dic_file:
             lines = dic_file.readlines()[1:]  # Skip the first line
         lines = [line for line in lines if not line.startswith("#")]  # Filter out comment lines
@@ -55,17 +65,14 @@ class DicChunk:
         str_chunks: List[List[str]] = [lines[i:i + chunk_size] for i in range(0, total_lines, chunk_size)]
         chunks: List[cls] = []
         for index, chunk in enumerate(str_chunks):
-            if compounds:
-                tmp_dir = path.join(target_dir, 'compounds')
-            else:
-                tmp_dir = target_dir
-            filename = path.basename(dic_path).replace('.dic', f'_chunk{index}.dic')
+            chunk_name = f"{variant.underscored}_chunk{index}"
+            filename = chunk_name + ".dic"
             chunk_path = path.join(tmp_dir, filename)
             with open(chunk_path, 'w', encoding=LATIN_1_ENCODING) as chunk_file:
                 # Prepend the count of lines in this chunk and then write all lines
                 chunk_file.write(f"{len(chunk)}\n")
                 chunk_file.writelines(chunk)
-            chunks.append(cls(chunk_path, compounds))
+            chunks.append(cls(chunk_path, chunk_name, compounds))
         LOGGER.debug(f"Split into {len(chunks)} chunks.")
         return chunks
 
@@ -79,7 +86,8 @@ class DicChunk:
         Returns:
             the temp file containing the unmunched dictionary
         """
-        unmunched_tmp = NamedTemporaryFile(delete=delete_tmp, mode='wb')
+        unmunched_tmp = NamedTemporaryFile(delete=delete_tmp, mode='wb',
+                                           prefix=f"{self.name}_unmunched_")
         LOGGER.debug(f"Unmunching {self} into {unmunched_tmp.name} ...")
         cmd_unmunch = f"unmunch {self.filepath} {aff_path}"
         unmunch_result = ShellCommand(cmd_unmunch).run()

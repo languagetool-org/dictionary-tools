@@ -31,6 +31,9 @@ class Variant:
     def __str__(self) -> str:
         return self.hyphenated
 
+    def __repr__(self) -> str:
+        return self.hyphenated
+
     def aff(self) -> str:
         return path.join(HUNSPELL_DIR, f"{self.underscored}.aff")
 

@@ -16,10 +16,11 @@ class ShellCommandException(Exception):
 
 class ShellCommand:
     """A class for executing Java commands."""
-    def __init__(self, command_str: str, env: dict = None):
+    def __init__(self, command_str: str, env: dict = None, cwd: str = '.'):
         self.command_str = command_str
         self.split_cmd = shlex.split(self.command_str)
         self.env: dict = {**os.environ}
+        self.cwd = cwd
         if env is not None:
             self.env.update(env)
 
@@ -33,13 +34,13 @@ class ShellCommand:
     def _popen(self, text: bool = False) -> subprocess.Popen:
         try:
             return subprocess.Popen(self.split_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE, text=text, env=self.env)
+                                    stderr=subprocess.PIPE, text=text, env=self.env, cwd=self.cwd)
         except FileNotFoundError:
             raise ShellCommandException(255, "Command or file not found.")
 
     def _run(self) -> subprocess.run:
         try:
-            return subprocess.run(self.split_cmd, capture_output=True, env=self.env)
+            return subprocess.run(self.split_cmd, capture_output=True, env=self.env, cwd=self.cwd)
         except FileNotFoundError:
             raise ShellCommandException(255, "Command or file not found.")
 

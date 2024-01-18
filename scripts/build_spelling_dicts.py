@@ -9,7 +9,7 @@ from os import path
 from lib.dic_chunk import DicChunk
 from lib.logger import LOGGER
 from lib.constants import SPELLING_DICT_DIR
-from lib.utils import compile_lt_dev, install_dictionaries, convert_to_utf8, pretty_time_delta
+from lib.utils import compile_lt_dev, install_dictionaries, convert_to_utf8, pretty_time_delta, compile_lt
 from lib.variant import Variant, VARIANT_MAPPING
 from lib.languagetool_utils import LanguageToolUtils as LtUtils
 
@@ -83,7 +83,11 @@ def main():
         f"CUSTOM_INSTALL_VERSION: {CUSTOM_INSTALL_VERSION}\n"
         f"DIC_VARIANTS: {DIC_VARIANTS}\n"
     )
+    # We might consider *always* compiling, since the spelling dicts depends on the tagger dicts having been *installed*
+    # and compiled with LT. The reason we need to also re-build LT is that we need to make sure that OUR tagger dicts
+    # are used by the WordTokenizer.
     if FORCE_COMPILE:
+        compile_lt()
         compile_lt_dev()
     tasks = []
     processed_files: dict[str: List[NamedTemporaryFile]] = {}
@@ -92,8 +96,8 @@ def main():
     # and then split them based on the dialectal and pre/post agreement alternation files
     for variant in DIC_VARIANTS:
         processed_files[variant] = []
-        dic_chunks: List[DicChunk] = DicChunk.from_hunspell_dic(variant.dic(), CHUNK_SIZE, TMP_DIR, SAMPLE_SIZE)
-        dic_chunks.extend(DicChunk.from_hunspell_dic(variant.compounds(), CHUNK_SIZE, TMP_DIR, SAMPLE_SIZE))
+        dic_chunks: List[DicChunk] = DicChunk.from_hunspell_dic(variant, CHUNK_SIZE, TMP_DIR, SAMPLE_SIZE)
+        dic_chunks.extend(DicChunk.from_hunspell_dic(variant, CHUNK_SIZE, TMP_DIR, SAMPLE_SIZE, compounds=True))
         for chunk in dic_chunks:
             tasks.append((variant, chunk))
     LOGGER.info("Starting unmunching and tokenisation process...")
