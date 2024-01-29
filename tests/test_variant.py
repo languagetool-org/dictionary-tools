@@ -1,9 +1,11 @@
 from lib.variant import Variant
+import lib.global_dirs as gd
 
 
 class TestVariant:
     """Test the Variant class."""
     def test_constructor(self):
+        gd.initialise_dir_utils('foo')
         variant = Variant('pt-BR')
         assert variant.lang == 'pt'
         assert variant.country == 'BR'
