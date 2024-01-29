@@ -5,7 +5,8 @@ from os import path
 from tempfile import NamedTemporaryFile
 from typing import Optional
 
-from lib.constants import LT_DIR, JAVA_RESULTS_DIR, LATIN_1_ENCODING
+from lib.constants import LATIN_1_ENCODING
+import lib.global_dirs as gd
 from lib.shell_command import ShellCommand
 from lib.logger import LOGGER
 
@@ -13,14 +14,14 @@ from lib.logger import LOGGER
 def compile_lt_dev():
     """Build with maven in the languagetool-dev directory."""
     LOGGER.info("Compiling LT dev...")
-    wd = path.join(LT_DIR, "languagetool-dev")
+    wd = path.join(gd.DIRS.LT_DIR, "languagetool-dev")
     ShellCommand("mvn clean compile assembly:single", cwd=wd).run()
 
 
 def compile_lt():
     """Build with maven in the languagetool-dev directory."""
     LOGGER.info("Compiling LT...")
-    ShellCommand("mvn clean install -DskipTests", cwd=LT_DIR).run()
+    ShellCommand("mvn clean install -DskipTests", cwd=gd.DIRS.LT_DIR).run()
 
 
 def install_dictionaries(custom_version: Optional[str]):
@@ -32,7 +33,7 @@ def install_dictionaries(custom_version: Optional[str]):
         env['PT_DICT_VERSION'] = custom_version
     else:
         LOGGER.info(f"Installing environment-defined version \"{env['PT_DICT_VERSION']}\"")
-    ShellCommand("mvn clean install", env=env, cwd=JAVA_RESULTS_DIR).run()
+    ShellCommand("mvn clean install", env=env, cwd=gd.DIRS.JAVA_RESULTS_DIR).run()
 
 
 def convert_to_utf8(tmp_file: NamedTemporaryFile, delete_tmp: bool = False) -> NamedTemporaryFile:

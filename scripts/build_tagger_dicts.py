@@ -7,9 +7,7 @@ from datetime import datetime
 
 from lib.languagetool_utils import LanguageToolUtils
 from lib.logger import LOGGER
-from lib.constants import (TAGGER_BUILD_SCRIPT_PATH, FDIC_DIR, RESULT_POS_DICT_FILEPATH,
-                           SORTED_POS_DICT_FILEPATH, POS_DICT_DIFF_FILEPATH, OLD_POS_DICT_FILEPATH, REPO_DIR,
-                           TAGGER_DICT_DIR, LT_RESULTS_DIR)
+import lib.global_dirs as gd
 from lib.shell_command import ShellCommand
 from lib.utils import compile_lt_dev, install_dictionaries, pretty_time_delta
 from lib.variant import Variant
@@ -37,26 +35,27 @@ class CLI:
                                  help="Custom version for the dictionary installation (overrides $PT_DICT_VERSION).")
         self.parser.add_argument('--verbosity', type=str, choices=['debug', 'info', 'warning', 'error', 'critical'],
                                  default='info', help='Verbosity level. Default is info.')
+        self.parser.add_argument("--repo-dir", type=str, required=False)
         self.args = self.parser.parse_args()
 
 
 def set_shell_env():
     custom_env = {
-        'REPO_DIR': REPO_DIR,
-        'DATA_SRC_DIR': TAGGER_DICT_DIR,
-        'RESULTS_DIR': LT_RESULTS_DIR,
-        'FDIC_DIR': FDIC_DIR,
-        'RESULT_DICT_FILEPATH': RESULT_POS_DICT_FILEPATH,
-        'SORTED_DICT_FILEPATH': SORTED_POS_DICT_FILEPATH,
-        'DICT_DIFF_FILEPATH': POS_DICT_DIFF_FILEPATH,
-        'OLD_DICT_FILEPATH': OLD_POS_DICT_FILEPATH
+        'REPO_DIR': DIRS.REPO_DIR,
+        'DATA_SRC_DIR': DIRS.TAGGER_DICT_DIR,
+        'RESULTS_DIR': DIRS.LT_RESULTS_DIR,
+        'FDIC_DIR': DIRS.FDIC_DIR,
+        'RESULT_DICT_FILEPATH': DIRS.RESULT_POS_DICT_FILEPATH,
+        'SORTED_DICT_FILEPATH': DIRS.SORTED_POS_DICT_FILEPATH,
+        'DICT_DIFF_FILEPATH': DIRS.POS_DICT_DIFF_FILEPATH,
+        'OLD_DICT_FILEPATH': DIRS.OLD_POS_DICT_FILEPATH
     }
     return {**os.environ, **custom_env}
 
 
 def run_shell_script() -> None:
     """Calls the shell script that gathers the tagger dict source files into a single TXT."""
-    ShellCommand(f"bash {TAGGER_BUILD_SCRIPT_PATH}", env=SHELL_ENV).run_with_output()
+    ShellCommand(f"bash {DIRS.TAGGER_BUILD_SCRIPT_PATH}", env=SHELL_ENV).run_with_output()
 
 
 def main():
@@ -77,6 +76,8 @@ def main():
 
 if __name__ == "__main__":
     cli = CLI()
+    gd.initialise_dir_utils(cli.args.repo_dir)
+    DIRS = gd.DIRS
     LOGGER.setLevel(cli.args.verbosity.upper())
     FORCE_INSTALL = cli.args.force_install
     FORCE_COMPILE = cli.args.no_force_compile

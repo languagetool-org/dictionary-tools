@@ -2,7 +2,8 @@ import re
 from tempfile import NamedTemporaryFile
 from typing import List
 
-from lib.constants import LATIN_1_ENCODING, LT_VER, LT_JAR_PATH, LT_DIR, RESULT_POS_DICT_FILEPATH
+from lib.constants import LATIN_1_ENCODING, LT_VER
+import lib.global_dirs as gd
 from lib.logger import LOGGER
 from lib.shell_command import ShellCommand
 from lib.variant import Variant
@@ -39,8 +40,8 @@ class LanguageToolUtils:
         tokenised_tmp = NamedTemporaryFile(delete=self.delete_tmp, mode='w', prefix=prefix)
         LOGGER.debug(f"Tokenising {unmunched_file.name} into {tokenised_tmp.name} ...")
         tokenise_cmd = (
-            f"java -cp {LT_JAR_PATH}:"
-            f"{LT_DIR}/languagetool-dev/target/languagetool-dev-{LT_VER}-jar-with-dependencies.jar "
+            f"java -cp {gd.DIRS.LT_JAR_PATH}:"
+            f"{gd.DIRS.LT_DIR}/languagetool-dev/target/languagetool-dev-{LT_VER}-jar-with-dependencies.jar "
             f"org.languagetool.dev.archive.WordTokenizer {self.variant.lang}"
         )
         with open(unmunched_file.name, 'r', encoding=LATIN_1_ENCODING) as u:
@@ -76,7 +77,7 @@ class LanguageToolUtils:
         megatemp.write("\n".join(sorted(lines)))
         LOGGER.debug(f"Found {len(lines)} unique unmunched and tokenised forms for {self.variant}.")
         cmd_build = (
-            f"java -cp {LT_JAR_PATH} "
+            f"java -cp {gd.DIRS.LT_JAR_PATH} "
             f"org.languagetool.tools.SpellDictionaryBuilder "
             f"-i {megatemp.name} "
             f"-info {self.variant.info('source')} "
@@ -91,9 +92,9 @@ class LanguageToolUtils:
     def build_pos_binary(self) -> None:
         LOGGER.info(f"Building part-of-speech binary for {self.variant}...")
         cmd_build = (
-            f"java -cp {LT_JAR_PATH} "
+            f"java -cp {gd.DIRS.LT_JAR_PATH} "
             f"org.languagetool.tools.POSDictionaryBuilder "
-            f"-i {RESULT_POS_DICT_FILEPATH} "
+            f"-i {gd.DIRS.RESULT_POS_DICT_FILEPATH} "
             f"-info {self.variant.pos_info_java_input_path()} "
             f"-o {self.variant.pos_dict_java_output_path()}"
         )
@@ -104,9 +105,9 @@ class LanguageToolUtils:
     def build_synth_binary(self) -> None:
         LOGGER.info(f"Building synthesiser binary for {self.variant}...")
         cmd_build = (
-            f"java -cp {LT_JAR_PATH} "
+            f"java -cp {gd.DIRS.LT_JAR_PATH} "
             f"org.languagetool.tools.SynthDictionaryBuilder "
-            f"-i {RESULT_POS_DICT_FILEPATH} "
+            f"-i {gd.DIRS.RESULT_POS_DICT_FILEPATH} "
             f"-info {self.variant.synth_info_java_input_path()} "
             f"-o {self.variant.synth_dict_java_output_path()}"
         )

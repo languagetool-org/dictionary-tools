@@ -7,8 +7,8 @@ from tempfile import NamedTemporaryFile
 from os import path
 
 from lib.dic_chunk import DicChunk
+import lib.global_dirs as gd
 from lib.logger import LOGGER
-from lib.constants import SPELLING_DICT_DIR
 from lib.utils import compile_lt_dev, install_dictionaries, convert_to_utf8, pretty_time_delta, compile_lt
 from lib.variant import Variant, VARIANT_MAPPING
 from lib.languagetool_utils import LanguageToolUtils as LtUtils
@@ -36,7 +36,7 @@ class CLI:
         )
         self.parser.add_argument('--language', type=str, help='Language code (e.g. pt-BR, en-US).',
                                  choices=Variant.LANG_CODES.keys(), required=True)
-        self.parser.add_argument('--tmp-dir', default=path.join(SPELLING_DICT_DIR, "tmp"),
+        self.parser.add_argument('--tmp-dir', default="tmp", required=False,
                                  help='Temporary directory for processing. Default is the "tmp" directory inside '
                                       'DICT_DIR.')
         self.parser.add_argument('--delete-tmp', action='store_true',
@@ -55,6 +55,7 @@ class CLI:
                                  help="Custom version for the dictionary installation (overrides $PT_DICT_VERSION).")
         self.parser.add_argument('--verbosity', type=str, choices=['debug', 'info', 'warning', 'error', 'critical'],
                                  default='info', help='Verbosity level. Default is info.')
+        self.parser.add_argument("--repo-dir", type=str, required=False)
         self.args = self.parser.parse_args()
 
 
@@ -121,7 +122,9 @@ if __name__ == "__main__":
     cli = CLI()
     args = cli.args
     LOGGER.setLevel(args.verbosity.upper())
-    TMP_DIR = args.tmp_dir
+    gd.initialise_dir_utils(args.repo_dir)
+    DIRS = gd.DIRS
+    TMP_DIR = path.join(DIRS.SPELLING_DICT_DIR, args.tmp_dir)
     DELETE_TMP = args.delete_tmp
     SAMPLE_SIZE = args.sample_size
     CHUNK_SIZE = args.chunk_size

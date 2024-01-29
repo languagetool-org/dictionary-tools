@@ -2,7 +2,7 @@ import shutil
 from os import path
 from typing import Literal
 
-from lib.constants import HUNSPELL_DIR, SPELLING_DICT_DIR, COMPOUNDS_DIR, JAVA_RESULTS_DIR, TAGGER_DICT_DIR
+import lib.global_dirs as gd
 
 
 class Variant:
@@ -35,11 +35,11 @@ class Variant:
         return self.hyphenated
 
     def aff(self) -> str:
-        return path.join(HUNSPELL_DIR, f"{self.underscored}.aff")
+        return path.join(gd.DIRS.HUNSPELL_DIR, f"{self.underscored}.aff")
 
     def dic(self) -> str:
         """Path to the plaintext Hunspell file."""
-        return path.join(HUNSPELL_DIR, f"{self.underscored}.dic")
+        return path.join(gd.DIRS.HUNSPELL_DIR, f"{self.underscored}.dic")
 
     def dict(self) -> str:
         """Path to the BINARY."""
@@ -48,19 +48,19 @@ class Variant:
     def info(self, directory: Literal['source', 'target']) -> str:
         """The path to the info file can be in the source (current repo) or destination (the java src)."""
         if directory == 'source':
-            directory = SPELLING_DICT_DIR
+            directory = gd.DIRS.SPELLING_DICT_DIR
         elif directory == 'target':
             directory = self.spelling_output_dir()
         return path.join(directory, f"{self.hyphenated}.info")
 
     def compounds(self) -> str:
-        return path.join(COMPOUNDS_DIR, f"{self.underscored}.dic")
+        return path.join(gd.DIRS.COMPOUNDS_DIR, f"{self.underscored}.dic")
 
     def freq(self) -> str:
-        return path.join(SPELLING_DICT_DIR, f"{self.lang}_{self.country}_wordlist.xml")
+        return path.join(gd.DIRS.SPELLING_DICT_DIR, f"{self.lang}_{self.country}_wordlist.xml")
 
     def java_output_dir(self) -> str:
-        return path.join(JAVA_RESULTS_DIR, "src/main/resources/org/languagetool/resource", self.lang)
+        return path.join(gd.DIRS.JAVA_RESULTS_DIR, "src/main/resources/org/languagetool/resource", self.lang)
 
     def spelling_output_dir(self) -> str:
         return path.join(self.java_output_dir(), "spelling")
@@ -78,10 +78,10 @@ class Variant:
         return path.join(self.java_output_dir(), f"{self.pretty.lower()}_synth.info")
 
     def pos_info_java_input_path(self) -> str:
-        return path.join(TAGGER_DICT_DIR, f"{self.pretty.lower()}.info")
+        return path.join(gd.DIRS.TAGGER_DICT_DIR, f"{self.pretty.lower()}.info")
 
     def synth_info_java_input_path(self) -> str:
-        return path.join(TAGGER_DICT_DIR, f"{self.pretty.lower()}_synth.info")
+        return path.join(gd.DIRS.TAGGER_DICT_DIR, f"{self.pretty.lower()}_synth.info")
 
     def copy_pos_info(self) -> None:
         shutil.copy(self.pos_info_java_input_path(), self.pos_info_java_output_path())

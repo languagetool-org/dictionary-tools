@@ -1,24 +1,27 @@
 """Mostly written by ChatGPT plus some additional fixes from me."""
 import argparse
 import re
+from os import path
 
 from lib.logger import LOGGER
-from lib.constants import LT_HOME
+import lib.global_dirs as gd
 
 
 class CLI:
     def __init__(self):
         parser = argparse.ArgumentParser(description='Update version in pom.xml file.')
-        parser.add_argument('--pom-file', help='Path to the pom.xml file', default=f'{LT_HOME}/pom.xml')
+        parser.add_argument('--pom-file', help='Path to the pom.xml file', required=False)
         parser.add_argument('--package-name', help='Name of the package to update')
         parser.add_argument('--new-version', help='New version number')
         parser.add_argument("--verbosity", type=str, choices=['debug', 'info', 'warning', 'error', 'critical'],
                             default='info', help='Verbosity level. Default is info.')
+        parser.add_argument("--repo-dir", type=str, required=False)
         self.args = parser.parse_args()
 
     def update_pom_version(self):
-        LOGGER.debug(f"In {self.args.pom_file}, setting {self.args.package_name}.version to {self.args.new_version}")
-        file_path = self.args.pom_file
+        pom_path = self.args.pom_file or path.join(gd.DIRS.LT_DIR, 'pom.xml')
+        LOGGER.debug(f"In {pom_path}, setting {self.args.package_name}.version to {self.args.new_version}")
+        file_path = pom_path
         package_name = self.args.package_name
         new_version = self.args.new_version
         with open(file_path, 'r') as file:
@@ -49,5 +52,7 @@ class CLI:
 
 if __name__ == "__main__":
     cli = CLI()
+    gd.initialise_dir_utils(cli.args.repo_dir)
+    DIRS = gd.DIRS
     LOGGER.setLevel(cli.args.verbosity.upper())
     cli.run()
