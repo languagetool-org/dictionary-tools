@@ -20,6 +20,7 @@ class DirUtils:
         self.HUNSPELL_DIR = path.join(self.SPELLING_DICT_DIR, "hunspell")
         self.TAGGER_DICT_DIR = path.join(self.DATA_DIR, "src-dict")
         self.COMPOUNDS_DIR = path.join(self.HUNSPELL_DIR, 'compounds')  # potentially used only Portuguese
+        self.LT_CHANGES_DIR = path.join(self.REPO_DIR, "lt-changes")
 
         # TODO: this *may* at some point be moved here, but that depends on how much work it will be to adapt the
         #  shell/perl; Tagger scripts paths
