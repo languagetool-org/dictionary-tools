@@ -70,6 +70,8 @@ def main():
     lt.build_synth_binary()
     if FORCE_INSTALL:
         install_dictionaries(custom_version=CUSTOM_INSTALL_VERSION)
+    if LOGGER.level == 10:  # DEBUG
+        lt.dump_dictionary()
     end_time = datetime.now()
     LOGGER.debug(f"Finished at {end_time.strftime('%r')}. "
                  f"Total time elapsed: {pretty_time_delta(end_time - start_time)}.")

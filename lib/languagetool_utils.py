@@ -115,3 +115,15 @@ class LanguageToolUtils:
         LOGGER.info(f"Done compiling {self.variant} synthesiser dictionary!")
         self.variant.copy_synth_info()
         self.variant.rename_synth_tag_files()
+
+    def dump_dictionary(self) -> None:
+        LOGGER.info(f"Dumping dictionary for {self.variant}...")
+        cmd_dump = (
+            f"java -cp {gd.DIRS.LT_JAR_PATH} "
+            f"org.languagetool.tools.DictionaryExporter "
+            f"-i {self.variant.pos_dict_java_output_path()} "
+            f"-info {self.variant.pos_info_java_input_path()} "
+            f"-o {self.variant.dump_dict_java_output_path()}"
+        )
+        ShellCommand(cmd_dump).run()
+        LOGGER.info(f"Done dumping {self.variant} dictionary!")
