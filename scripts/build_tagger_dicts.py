@@ -69,7 +69,9 @@ def main():
     lt.build_pos_binary()
     lt.build_synth_binary()
     if FORCE_INSTALL:
-        install_dictionaries(custom_version=CUSTOM_INSTALL_VERSION)
+        custom_install_env_var_name = LANGUAGE.lang.upper() + "_DICT_VERSION"
+        custom_version: tuple[str, str] = (custom_install_env_var_name, CUSTOM_INSTALL_VERSION)
+        install_dictionaries(custom_version)
     if LOGGER.level == 10:  # DEBUG
         lt.dump_dictionary()
     end_time = datetime.now()

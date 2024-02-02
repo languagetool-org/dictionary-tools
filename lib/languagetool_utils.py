@@ -96,6 +96,7 @@ class LanguageToolUtils:
             f"org.languagetool.tools.POSDictionaryBuilder "
             f"-i {gd.DIRS.RESULT_POS_DICT_FILEPATH} "
             f"-info {self.variant.pos_info_java_input_path()} "
+            f"-freq {self.variant.freq()} "
             f"-o {self.variant.pos_dict_java_output_path()}"
         )
         ShellCommand(cmd_build).run()

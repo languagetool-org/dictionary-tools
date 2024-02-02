@@ -24,13 +24,13 @@ def compile_lt():
     ShellCommand("mvn clean install -DskipTests", cwd=gd.DIRS.LT_DIR).run()
 
 
-def install_dictionaries(custom_version: Optional[str]):
+def install_dictionaries(custom_version: Optional[tuple[str, str]]):
     """Install our dictionaries to the local ~/.m2."""
     LOGGER.info("Installing dictionaries...")
     env: dict = {}
     if custom_version is not None:
-        LOGGER.info(f"Installing custom version \"{custom_version}\"")
-        env['PT_DICT_VERSION'] = custom_version
+        LOGGER.info(f"Installing custom version \"{custom_version[1]}\"")
+        env[custom_version[0]] = custom_version[1]
     else:
         LOGGER.info(f"Installing environment-defined version \"{env['PT_DICT_VERSION']}\"")
     ShellCommand("mvn clean install", env=env, cwd=gd.DIRS.JAVA_RESULTS_DIR).run()

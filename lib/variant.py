@@ -57,7 +57,11 @@ class Variant:
         return path.join(gd.DIRS.COMPOUNDS_DIR, f"{self.underscored}.dic")
 
     def freq(self) -> str:
-        return path.join(gd.DIRS.SPELLING_DICT_DIR, f"{self.lang}_{self.country}_wordlist.xml")
+        if self.country:
+            filename = f"{self.lang}_{self.country}_wordlist.xml"
+        else:
+            filename = f"{self.lang}_wordlist.xml"
+        return path.join(gd.DIRS.SPELLING_DICT_DIR, filename)
 
     def java_output_dir(self) -> str:
         return path.join(gd.DIRS.JAVA_RESULTS_DIR, "src/main/resources/org/languagetool/resource", self.lang)
