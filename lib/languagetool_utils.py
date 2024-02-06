@@ -84,7 +84,7 @@ class LanguageToolUtils:
             f"-freq {self.variant.freq()} "
             f"-o {self.variant.dict()}"
         )
-        ShellCommand(cmd_build).run()
+        ShellCommand(cmd_build).run_with_output()
         LOGGER.info(f"Done compiling {self.variant} spelling dictionary!")
         self.variant.copy_spell_info()
         megatemp.close()
@@ -99,7 +99,7 @@ class LanguageToolUtils:
             f"-freq {self.variant.freq()} "
             f"-o {self.variant.pos_dict_java_output_path()}"
         )
-        ShellCommand(cmd_build).run()
+        ShellCommand(cmd_build).run_with_output()
         LOGGER.info(f"Done compiling {self.variant} part-of-speech dictionary!")
         self.variant.copy_pos_info()
 
@@ -112,7 +112,7 @@ class LanguageToolUtils:
             f"-info {self.variant.synth_info_java_input_path()} "
             f"-o {self.variant.synth_dict_java_output_path()}"
         )
-        ShellCommand(cmd_build).run()
+        ShellCommand(cmd_build).run_with_output()
         LOGGER.info(f"Done compiling {self.variant} synthesiser dictionary!")
         self.variant.copy_synth_info()
         self.variant.rename_synth_tag_files()
@@ -126,5 +126,5 @@ class LanguageToolUtils:
             f"-info {self.variant.pos_info_java_input_path()} "
             f"-o {self.variant.dump_dict_java_output_path()}"
         )
-        ShellCommand(cmd_dump).run()
+        ShellCommand(cmd_dump).run_with_output()
         LOGGER.info(f"Done dumping {self.variant} dictionary!")
