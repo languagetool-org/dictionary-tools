@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dictionary-tools"
-version = "0.1.1"
+version = "0.1.2"
 description = "LT Dictionary tools for building, compiling, and deploying binary dictionary files"
 authors = [
     "Jaume Ortolà i Font <jaume.ortola@languagetool.com>",

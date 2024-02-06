@@ -36,6 +36,8 @@ class CLI:
         self.parser.add_argument('--verbosity', type=str, choices=['debug', 'info', 'warning', 'error', 'critical'],
                                  default='info', help='Verbosity level. Default is info.')
         self.parser.add_argument("--repo-dir", type=str, required=False)
+        self.parser.add_argument("--spelling", action="store_true", help="POS dict will also be used for spelling.",
+                                 required=False)
         self.args = self.parser.parse_args()
 
 
@@ -66,7 +68,7 @@ def main():
         compile_lt_dev()
     run_shell_script()
     lt = LanguageToolUtils(LANGUAGE)
-    lt.build_pos_binary()
+    lt.build_pos_binary(use_freq=SPELLING)
     lt.build_synth_binary()
     if FORCE_INSTALL:
         custom_install_env_var_name = LANGUAGE.lang.upper() + "_DICT_VERSION"
@@ -86,6 +88,7 @@ if __name__ == "__main__":
     LOGGER.setLevel(cli.args.verbosity.upper())
     FORCE_INSTALL = cli.args.force_install
     FORCE_COMPILE = cli.args.no_force_compile
+    SPELLING = cli.args.spelling
     CUSTOM_INSTALL_VERSION = cli.args.install_version
     LANGUAGE = Variant(cli.args.language)
     SHELL_ENV = set_shell_env()

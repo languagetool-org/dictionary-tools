@@ -89,16 +89,17 @@ class LanguageToolUtils:
         self.variant.copy_spell_info()
         megatemp.close()
 
-    def build_pos_binary(self) -> None:
+    def build_pos_binary(self, use_freq: bool = False) -> None:
         LOGGER.info(f"Building part-of-speech binary for {self.variant}...")
         cmd_build = (
             f"java -cp {gd.DIRS.LT_JAR_PATH} "
             f"org.languagetool.tools.POSDictionaryBuilder "
             f"-i {gd.DIRS.RESULT_POS_DICT_FILEPATH} "
             f"-info {self.variant.pos_info_java_input_path()} "
-            f"-freq {self.variant.freq()} "
             f"-o {self.variant.pos_dict_java_output_path()}"
         )
+        if use_freq:
+            cmd_build += f" -freq {self.variant.freq()}"
         ShellCommand(cmd_build).run_with_output()
         LOGGER.info(f"Done compiling {self.variant} part-of-speech dictionary!")
         self.variant.copy_pos_info()
