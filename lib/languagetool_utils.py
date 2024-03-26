@@ -118,14 +118,26 @@ class LanguageToolUtils:
         self.variant.copy_synth_info()
         self.variant.rename_synth_tag_files()
 
-    def dump_dictionary(self) -> None:
+    def dump_pos_dictionary(self) -> None:
         LOGGER.info(f"Dumping dictionary for {self.variant}...")
         cmd_dump = (
             f"java -cp {gd.DIRS.LT_JAR_PATH} "
             f"org.languagetool.tools.DictionaryExporter "
             f"-i {self.variant.pos_dict_java_output_path()} "
             f"-info {self.variant.pos_info_java_input_path()} "
-            f"-o {self.variant.dump_dict_java_output_path()}"
+            f"-o {self.variant.pos_dump_dict_java_output_path()}"
         )
         ShellCommand(cmd_dump).run_with_output()
-        LOGGER.info(f"Done dumping {self.variant} dictionary!")
+        LOGGER.info(f"Done dumping {self.variant} POS dictionary!")
+
+    def dump_synth_dictionary(self) -> None:
+        LOGGER.info(f"Dumping dictionary for {self.variant}...")
+        cmd_dump = (
+            f"java -cp {gd.DIRS.LT_JAR_PATH} "
+            f"org.languagetool.tools.DictionaryExporter "
+            f"-i {self.variant.synth_dict_java_output_path()} "
+            f"-info {self.variant.synth_info_java_input_path()} "
+            f"-o {self.variant.synth_dump_dict_java_output_path()}"
+        )
+        ShellCommand(cmd_dump).run_with_output()
+        LOGGER.info(f"Done dumping {self.variant} synth dictionary!")

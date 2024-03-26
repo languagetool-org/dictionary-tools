@@ -75,7 +75,8 @@ def main():
         custom_version: tuple[str, str] = (custom_install_env_var_name, CUSTOM_INSTALL_VERSION)
         install_dictionaries(custom_version)
     if LOGGER.level == 10:  # DEBUG
-        lt.dump_dictionary()
+        lt.dump_pos_dictionary()
+        lt.dump_synth_dictionary()
     end_time = datetime.now()
     LOGGER.debug(f"Finished at {end_time.strftime('%r')}. "
                  f"Total time elapsed: {pretty_time_delta(end_time - start_time)}.")

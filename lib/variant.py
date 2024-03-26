@@ -100,8 +100,11 @@ class Variant:
     def copy_spell_info(self) -> None:
         return shutil.copy(self.info('source'), self.info('target'))
 
-    def dump_dict_java_output_path(self) -> str:
+    def pos_dump_dict_java_output_path(self) -> str:
         return path.join(gd.DIRS.LT_RESULTS_DIR, f"{self.pretty.lower()}.dump")
+
+    def synth_dump_dict_java_output_path(self) -> str:
+        return path.join(gd.DIRS.LT_RESULTS_DIR, f"{self.pretty.lower()}-synth.dump")
 
 
 # Portuguese
