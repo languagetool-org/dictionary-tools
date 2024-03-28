@@ -1,6 +1,6 @@
 import pytest
 
-from lib.shell_command import ShellCommand, ShellCommandException
+from lib.shell_command import ShellCommand, ShellCommandException, LOGGER
 
 
 class TestShellCommand:
@@ -11,10 +11,13 @@ class TestShellCommand:
     def test_run_with_input(self):
         assert ShellCommand("tr 'o' 'a'").run_with_input("foo") == "faa"
 
-    def test_run_with_output(self, capsys):
+    def test_run_with_output(self, caplog):
+        """Test the run_with_output method: shell command output is redirected to the logger on the debug level."""
+        LOGGER.setLevel("DEBUG")
         ShellCommand("expr 2 + 2").run_with_output()
-        captured = capsys.readouterr()
-        assert captured.out == "4\n"
+        assert caplog.text == ('DEBUG    dictionary_tools:shell_command.py:64 Running command: expr 2 + 2\n'
+                               'DEBUG    dictionary_tools:shell_command.py:71 4\n') != '4'
+        LOGGER.setLevel("FATAL")
 
     def test_run_with_not_found_error(self):
         with pytest.raises(ShellCommandException):
