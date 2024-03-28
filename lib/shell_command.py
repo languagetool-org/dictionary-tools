@@ -68,6 +68,12 @@ class ShellCommand:
             if output == b'' and process.poll() is not None:
                 break
             if output:
-                print(output.decode().strip())
+                LOGGER.debug(output.decode().strip())
+            err = process.stderr.readline()
+            if err:
+                LOGGER.warn(err.decode().strip())
         rc = process.poll()
+        remaining_err = process.stderr.read()
+        if remaining_err:
+            LOGGER.warn(remaining_err.decode().strip())
         self.check_status(rc, process.stderr.read())

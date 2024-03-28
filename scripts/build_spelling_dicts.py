@@ -112,7 +112,9 @@ def main():
         for file in file_list:
             file.close()
     if FORCE_INSTALL:
-        install_dictionaries(CUSTOM_INSTALL_VERSION)
+        custom_install_env_var_name = DIC_VARIANTS[0].lang.upper() + "_DICT_VERSION"
+        custom_version: tuple[str, str] = (custom_install_env_var_name, CUSTOM_INSTALL_VERSION)
+        install_dictionaries(custom_version)
     end_time = datetime.now()
     LOGGER.debug(f"Finished at {end_time.strftime('%r')}. "
                  f"Total time elapsed: {pretty_time_delta(end_time - start_time)}.")
