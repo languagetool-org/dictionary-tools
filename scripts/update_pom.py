@@ -30,7 +30,7 @@ class CLI:
 
         for i, line in enumerate(lines):
             if version_tag_open in line:
-                lines[i] = version_regex.sub(r'\1' + new_version + r'\2', line)
+                lines[i] = lines[i] = version_regex.sub(lambda m: f"{m.group(1)}{new_version}{m.group(2)}", line)
                 updated = True
                 break
 
